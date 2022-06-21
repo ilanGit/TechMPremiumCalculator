@@ -29,10 +29,35 @@ namespace PremiumCalculator.Controllers
             prm.Occupations = lstOccupation;
             return View(prm);
         }
+       
 
-        public IActionResult Privacy()
+        public JsonResult GetPremium(string Name, string occupation, DateTime dob, int InsAmount)
         {
-            return View();
+           var age=  GetAge(dob);
+           var Premium =   CalucalatePremium(occupation, InsAmount, age);
+            PremiumModel prm = new PremiumModel();
+            prm.IName = Name;
+            prm.sOccupation = occupation;
+            prm.Age = age;
+            prm.InsuredAmount = InsAmount;
+            prm.MPremium = Premium;
+
+            return Json(prm);
+        }
+
+        private int GetAge(DateTime dob)
+        {
+            var age = DateTime.Now.Subtract(dob).Days;
+            age = age / 365;
+            return age;
+        }
+
+        private double CalucalatePremium(string occupation, int InsAmount, int Age)
+        {
+            double mpremium;
+            var Rating = RatingConstants.ReturnRating().Where(x => x.Key == occupation).FirstOrDefault().Value;
+            mpremium = (InsAmount * Rating * Age) / 1000 * 12;
+           return mpremium;
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -14,7 +14,7 @@
             <div class="form-group">  
                 <label  class="control-label col-12 col-sm-4">Name</label>  
                  <div class="col-12 col-sm-6">
-                @Html.TextBoxFor(m=>m.IName , new { @class = "form-control" })  
+                @Html.TextBoxFor(m=>m.IName , new { @class = "form-control",@id = "Name"  })  
                  </div>
             </div>  
               <div class="form-group">  
@@ -26,25 +26,85 @@
              <div class="form-group">  
                 <label  class="control-label col-12 col-sm-6">DOB</label>  
                 <div class="col-12 col-sm-6">
-                   @Html.TextBoxFor(m => m.DateOfBirth, "{0:d}", new { @class = "form-control" , type = "date"})
+                   @Html.TextBoxFor(m => m.DateOfBirth, "{0:d}", new { @class = "form-control" , type = "date" ,@id = "dob"})
                    </div>
             </div>  
              <div class="form-group">  
-                <label  class="control-label col-12 col-sm-6">Age</label>  
+                <label  class="control-label col-12 col-sm-6">InsurredAmount</label>  
                  <div class="col-12 col-sm-6">
-                @Html.TextBoxFor(m=>m.Age , new { @class = "form-control" })
+                @Html.TextBoxFor(m=>m.InsuredAmount , new { @class = "form-control" ,@id = "InsAmount"})
                 </div>
             </div>  
              <div class="form-group">  
                 <label  class="control-label col-12 col-sm-6">Occupation</label>  
                 <div class="col-12 col-sm-6">
-                   @Html.DropDownListFor(p => p.Occupations, new SelectList(Model.Occupations,"Rating","OccupationName"),"Select", new { @class = "form-control" })
+                   @Html.DropDownListFor(p => p.Occupations, new SelectList(Model.Occupations,"Rating","OccupationName"),"Select", new { @class = "form-control" , @id = "dlloccuption" })
                    </div>
             </div>  
+ 
+  </div>
+
+   </div>
+     <div>
+     <span class="label label-success">Monthly Premium </span>
+     <label id="lblMonthAmt"></label>
+      <label id="lblname"></label>
+       <label id="lblAge"></label>
+       <label id="lblInsuredamnt"></label>
+        <label id="lbloccupation"></label>
   </div>
    </div>
-   </div>
 
-   <script>
+ <script>
+       $(document).ready(function () {
+
+    $("#dlloccuption").change(function () {
+         $.ajax({
+        type: 'POST',
+        url: '@Url.Action("GetPremium")',
+        dataType: 'json',
+        data: {Name: $("#Name").val(), occupation: $("#dlloccuption").val() ,dob: $("#dob").val() ,InsAmount: $("#InsAmount").val() },
+        success: function (data) {
+           
+          $.each(data, function (key, value) {
+              alert(key);
+              //alert(key["MPremium"].value);
+               if(key=="mPremium")
+              {
+                    $("#lblMonthAmt").text('Your Monthly Premium : ' + value);
+              }
+             if(key=='insuredAmount')
+             {
+                   $("#lblInsuredamnt").text('For the Death – Sum Insured. : ' + value);
+             }
+              if(key=="iName")
+             {
+                $("#lblname").text('Insurer Name : ' + value);
+             }
+              if(key=="age")
+             {
+                $("#lblAge").text('Your Age as per your Date of Birth : ' + value);
+             }
+             if(key=="sOccupation")
+             {
+                 
+                  $("#lbloccupation").text('For the occupation : ' + value);
+             }
+             
+          });
+    
+        },
+        error: function (ex) {
+            var r = jQuery.parseJSON(response.responseText);
+            alert("Message: " + r.Message);
+            alert("StackTrace: " + r.StackTrace);
+            alert("ExceptionType: " + r.ExceptionType);
+        }
+    });
+
+       
+    });
+
+ });
     
 </script>

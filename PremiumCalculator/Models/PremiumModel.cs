@@ -5,10 +5,13 @@
        
         public int Age { get; set; }
         public string? IName { get; set; }
+        public string? sOccupation { get; set; }
         public DateTime DateOfBirth { get; set; }
 
         public int InsuredAmount { get; set; }
         public List<Occupation>? Occupations { get; set; }
+
+        public double MPremium { get; set; }
 
 
     }
