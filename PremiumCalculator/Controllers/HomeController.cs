@@ -6,12 +6,7 @@ namespace PremiumCalculator.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        
 
         public IActionResult Index()
         {
@@ -30,19 +25,33 @@ namespace PremiumCalculator.Controllers
             return View(prm);
         }
        
-
+        /// <summary>
+        /// calcuates the premium
+        /// </summary>
+        /// <param name="Name"></param>
+        /// <param name="occupation"></param>
+        /// <param name="dob"></param>
+        /// <param name="InsAmount"></param>
+        /// <returns></returns>
         public JsonResult GetPremium(string Name, string occupation, DateTime dob, int InsAmount)
         {
-           var age=  GetAge(dob);
-           var Premium =   CalucalatePremium(occupation, InsAmount, age);
-            PremiumModel prm = new PremiumModel();
-            prm.Age = age;
-            prm.IName = Name;
-            prm.sOccupation = occupation;
-            prm.InsuredAmount = InsAmount;
-            prm.MPremium = Premium;
+            try
+            {
+                var age = GetAge(dob);
+                var Premium = CalucalatePremium(occupation, InsAmount, age);
+                PremiumModel prm = new PremiumModel();
+                prm.Age = age;
+                prm.IName = Name;
+                prm.sOccupation = occupation;
+                prm.InsuredAmount = InsAmount;
+                prm.MPremium = Premium;
 
-            return Json(prm);
+                return Json(prm);
+            }
+            catch
+            {
+                return Json("");
+            }
         }
 
         private int GetAge(DateTime dob)
