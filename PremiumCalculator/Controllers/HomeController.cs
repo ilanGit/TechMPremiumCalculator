@@ -36,9 +36,9 @@ namespace PremiumCalculator.Controllers
            var age=  GetAge(dob);
            var Premium =   CalucalatePremium(occupation, InsAmount, age);
             PremiumModel prm = new PremiumModel();
+            prm.Age = age;
             prm.IName = Name;
             prm.sOccupation = occupation;
-            prm.Age = age;
             prm.InsuredAmount = InsAmount;
             prm.MPremium = Premium;
 
@@ -56,7 +56,7 @@ namespace PremiumCalculator.Controllers
         {
             double mpremium;
             var Rating = RatingConstants.ReturnRating().Where(x => x.Key == occupation).FirstOrDefault().Value;
-            mpremium = (InsAmount * Rating * Age) / 1000 * 12;
+            mpremium = Math.Round((InsAmount * Rating * Age) / (1000 * 12),2);
            return mpremium;
         }
 

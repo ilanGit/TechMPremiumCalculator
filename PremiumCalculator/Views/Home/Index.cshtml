@@ -2,94 +2,177 @@
 @{
     ViewData["Title"] = "Insurance Premium Calculator";
 }
-
+<style>
+    .form-group{
+    margin:10px;
+}
+.pnlBg
+{
+    background-color:lightblue;
+}
+.hdng
+{
+    font-size:14px;
+    font-weight:bold;
+}
+.fntclr
+{
+    color:darkblue;
+}
+.required::after {
+        content: "*";
+        font-weight: bold;
+        color: red;
+    }
+</style>
+<form>
 <div class="text-center">
-    <h1 class="display-6">Premium Calculator</h1>
+    <h1 class="display-6 text-primary">Premium Calculator</h1>
    
 </div>
-<div class="class="col-12"></div>
-<div class="class="col-12">
+<div class="container"></div>
+<div class="pnlBg">
 <div class="row">  
     <div class="col-md-8 offset-md-2">  
-            <div class="form-group">  
-                <label  class="control-label col-12 col-sm-4">Name</label>  
+            <div class="form-group row">  
+                <label  class="control-label col-12 col-sm-3 required">Name</label>  
                  <div class="col-12 col-sm-6">
                 @Html.TextBoxFor(m=>m.IName , new { @class = "form-control",@id = "Name"  })  
                  </div>
             </div>  
-              <div class="form-group">  
-                <label  class="control-label col-12 col-sm-6">Age</label>  
+              <div class="form-group row">  
+                <label  class="control-label col-12 col-sm-3">Age</label>  
                  <div class="col-12 col-sm-6">
                 @Html.TextBoxFor(m=>m.Age , new { @class = "form-control" })
                 </div>
+                 <label  class="control-label col-12 col-sm-3" style="font-size:10px;color:maroon">Age will be auto calculated</label> 
             </div>  
-             <div class="form-group">  
-                <label  class="control-label col-12 col-sm-6">DOB</label>  
+             <div class="form-group row">  
+                <label  class="control-label col-12 col-sm-3 required">DOB</label>  
                 <div class="col-12 col-sm-6">
-                   @Html.TextBoxFor(m => m.DateOfBirth, "{0:d}", new { @class = "form-control" , type = "date" ,@id = "dob"})
+                   @Html.TextBoxFor(m => m.DateOfBirth, "{0:d}", new { @class = "form-control" , type = "date" ,@id = "dob",max = DateTime.Now.ToString("yyyy-MM-dd")})
                    </div>
             </div>  
-             <div class="form-group">  
-                <label  class="control-label col-12 col-sm-6">InsurredAmount</label>  
+             <div class="form-group row">  
+                <label  class="control-label col-12 col-sm-3 required">InsurredAmount</label>  
                  <div class="col-12 col-sm-6">
                 @Html.TextBoxFor(m=>m.InsuredAmount , new { @class = "form-control" ,@id = "InsAmount"})
                 </div>
             </div>  
-             <div class="form-group">  
-                <label  class="control-label col-12 col-sm-6">Occupation</label>  
+             <div class="form-group row">  
+                <label  class="control-label col-12 col-sm-3 required">Occupation</label>  
                 <div class="col-12 col-sm-6">
                    @Html.DropDownListFor(p => p.Occupations, new SelectList(Model.Occupations,"Rating","OccupationName"),"Select", new { @class = "form-control" , @id = "dlloccuption" })
-                   </div>
+                 </div>
+                  <label  class="control-label col-12 col-sm-3" style="font-size:10px;color:maroon">Select the occupation to calculate your premium.</label>  
             </div>  
  
   </div>
 
    </div>
-     <div>
-     <span class="label label-success">Monthly Premium </span>
-     <label id="lblMonthAmt"></label>
-      <label id="lblname"></label>
-       <label id="lblAge"></label>
-       <label id="lblInsuredamnt"></label>
-        <label id="lbloccupation"></label>
-  </div>
+   
    </div>
-
+   <div class="container bg-light bg-dash-pad bg-dash-pad-release" id="result">
+      <div>
+     <label class="hdng" id="lblHeading"></label>
+     </div>
+      <div>
+     <label class="hdng fntclr" id="lblMonthAmt"></label>
+     </div>
+       <div>
+      <label id="lblname"></label>
+       </div>
+          <div>
+       <label id="lblAge"></label>
+        </div>
+        <div>
+       <label id="lblInsuredamnt"></label>
+        </div>
+        @* <div>
+        <label id="lbloccupation"></label>
+       </div>*@
+  </div>
+  </form>
  <script>
        $(document).ready(function () {
 
     $("#dlloccuption").change(function () {
+       var name= $("#Name").val();
+       if ($('#Name').val() == '') {
+            $('#Name').focus();
+            $("#Name").after("<div class='validation' style='color:red;margin-bottom: 20px;'>Please Enter Name</div>");
+            return false;
+        }
+       var dob= $("#dob").val();
+       if ($('#dob').val() == '') {
+            $('#dob').focus();
+            $("#dob").after("<div class='validation' style='color:red;margin-bottom: 20px;'>Please Enter Dob</div>");
+            return false;
+        }
+         $("#InsAmount").val();
+         if ($('#InsAmount').val() == '') {
+            $('#InsAmount').focus();
+            $("#InsAmount").after("<div class='validation' style='color:red;margin-bottom: 20px;'>Please Enter Insured Amount</div>");
+            return false;
+        }
+       var occp=$("#dlloccuption").val();
+      
+       if(occp.length>0)
+       {
+            $("#result").show();
+          
+       }
+       else
+       {
+            $("#result").hide();
+            return;
+       }
+
+
          $.ajax({
         type: 'POST',
         url: '@Url.Action("GetPremium")',
         dataType: 'json',
         data: {Name: $("#Name").val(), occupation: $("#dlloccuption").val() ,dob: $("#dob").val() ,InsAmount: $("#InsAmount").val() },
         success: function (data) {
-           
+             $("#lblHeading").text("Monthly Premium Result");
+             var age = true;
           $.each(data, function (key, value) {
-              alert(key);
+              //alert(key);
               //alert(key["MPremium"].value);
-               if(key=="mPremium")
-              {
-                    $("#lblMonthAmt").text('Your Monthly Premium : ' + value);
-              }
-             if(key=='insuredAmount')
-             {
-                   $("#lblInsuredamnt").text('For the Death – Sum Insured. : ' + value);
-             }
-              if(key=="iName")
-             {
-                $("#lblname").text('Insurer Name : ' + value);
-             }
               if(key=="age")
              {
-                $("#lblAge").text('Your Age as per your Date of Birth : ' + value);
+                 if(value <10)
+                 {
+                      $("#lblAge").text('Age as per mentioned Date of Birth is Less than 10 year,Minimum age requirement is 10 for premium calculater.');
+                      age=false;
+                 }
+                 else
+                 {
+                     $("#lblAge").text('Age as per mentioned Date of Birth : ' + value);
+                  }
              }
-             if(key=="sOccupation")
+             if(age==true)
              {
+                   if(key=="mPremium")
+                  {
+                        $("#lblMonthAmt").text('Your Monthly Premium : ' + value);
+                  }
+                 if(key=='insuredAmount')
+                 {
+                       $("#lblInsuredamnt").text('For the Death – Sum Insured. : ' + value);
+                 }
+                  if(key=="iName")
+                 {
+                    $("#lblname").text('Insurer Name : ' + value);
+                 }
+              
+                 if(key=="sOccupation")
+                 {
                  
-                  $("#lbloccupation").text('For the occupation : ' + value);
-             }
+                      $("#lbloccupation").text('For the occupation : ' + value);
+                 }
+            }
              
           });
     
