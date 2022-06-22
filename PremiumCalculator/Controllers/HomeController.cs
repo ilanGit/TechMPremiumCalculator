@@ -11,17 +11,7 @@ namespace PremiumCalculator.Controllers
         public IActionResult Index()
         {
             PremiumModel prm = new PremiumModel();
-            List<Occupation> lstOccupation = new List<Occupation>
-                {
-                    new Occupation { OccupationName = "Cleaner", Rating = "Light Manual"},
-                    new Occupation { OccupationName = "Doctor", Rating = "Professional" },
-                    new Occupation { OccupationName = "Author", Rating = "White Collar" },
-                     new Occupation { OccupationName = "Farmer", Rating = "Heavy Manual"},
-                    new Occupation { OccupationName = "Mechanic", Rating = "Heavy Manual" },
-                    new Occupation { OccupationName = "Florist", Rating = "Light Manual" }
-
-                };
-            prm.Occupations = lstOccupation;
+            prm.Occupations = RatingConstants.OccupationList();
             return View(prm);
         }
        
@@ -33,7 +23,7 @@ namespace PremiumCalculator.Controllers
         /// <param name="dob"></param>
         /// <param name="InsAmount"></param>
         /// <returns></returns>
-        public JsonResult GetPremium(string Name, string occupation, DateTime dob, int InsAmount)
+        public JsonResult GetPremium(string Name, string occupation, DateTime dob, double InsAmount)
         {
             try
             {
@@ -50,7 +40,8 @@ namespace PremiumCalculator.Controllers
             }
             catch
             {
-                return Json("");
+                return Json("Error occured");
+                //log exception //TODO
             }
         }
 
@@ -60,12 +51,18 @@ namespace PremiumCalculator.Controllers
             age = age / 365;
             return age;
         }
-
-        private double CalucalatePremium(string occupation, int InsAmount, int Age)
+        /// <summary>
+        /// Calculates the premium based on the formula
+        /// </summary>
+        /// <param name="occupation"></param>
+        /// <param name="InsAmount"></param>
+        /// <param name="Age"></param>
+        /// <returns></returns>
+        private double CalucalatePremium(string occupation, double InsAmount, int Age)
         {
-            double mpremium;
-            var Rating = RatingConstants.ReturnRating().Where(x => x.Key == occupation).FirstOrDefault().Value;
-            mpremium = Math.Round((InsAmount * Rating * Age) / (1000 * 12),2);
+          
+            var Rating = RatingConstants.ReturnRating().Where(x => x.Key == occupation).FirstOrDefault().Value;//Get the rating value
+            double mpremium = Math.Round((InsAmount * Rating * Age) / (1000 * 12),2); //calculate the monthly value
            return mpremium;
         }
 

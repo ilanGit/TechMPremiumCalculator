@@ -8,7 +8,7 @@
         public string? sOccupation { get; set; }
         public DateTime DateOfBirth { get; set; }
 
-        public int InsuredAmount { get; set; }
+        public double InsuredAmount { get; set; }
         public List<Occupation>? Occupations { get; set; }
 
         public double MPremium { get; set; }

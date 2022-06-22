@@ -8,16 +8,29 @@
 }
 .pnlBg
 {
-    background-color:lightblue;
+    background-color:lightsteelblue;
+}
+.pnlhBg
+{
+    height:30px;
+    background-color:aliceblue;
 }
 .hdng
 {
     font-size:14px;
-    font-weight:bold;
+    font-weight:bolder;
+    text-decoration:underline
 }
 .fntclr
 {
     color:darkblue;
+    font-size:large;
+}
+.headercls
+{
+  font-family:  regular,montserrat,sans-serif;
+  font-size:20px;
+  color:#0047f5;
 }
 .required::after {
         content: "*";
@@ -26,8 +39,8 @@
     }
 </style>
 <form>
-<div class="text-center">
-    <h1 class="display-6 text-primary">Premium Calculator</h1>
+<div class="text-center pnlhBg">
+    <h1 class="display-6 headercls">Insurance Premium Calculator</h1>
    
 </div>
 <div class="container"></div>
@@ -43,9 +56,9 @@
               <div class="form-group row">  
                 <label  class="control-label col-12 col-sm-3">Age</label>  
                  <div class="col-12 col-sm-6">
-                @Html.TextBoxFor(m=>m.Age , new { @class = "form-control" })
+                @Html.TextBoxFor(m=>m.Age , new { @class = "form-control" ,@id = "iage"})
                 </div>
-                 <label  class="control-label col-12 col-sm-3" style="font-size:10px;color:maroon">Age will be auto calculated</label> 
+                 <label  class="control-label col-12 col-sm-3" style="font-size:10px;color:maroon">(Age will be auto calculated)</label> 
             </div>  
              <div class="form-group row">  
                 <label  class="control-label col-12 col-sm-3 required">DOB</label>  
@@ -54,9 +67,9 @@
                    </div>
             </div>  
              <div class="form-group row">  
-                <label  class="control-label col-12 col-sm-3 required">InsurredAmount</label>  
+                <label  class="control-label col-12 col-sm-3 required">Insurred Amount</label>  
                  <div class="col-12 col-sm-6">
-                @Html.TextBoxFor(m=>m.InsuredAmount , new { @class = "form-control" ,@id = "InsAmount"})
+                @Html.TextBoxFor(m=>m.InsuredAmount , new { @class = "form-control", type = "number" ,@id = "InsAmount"})
                 </div>
             </div>  
              <div class="form-group row">  
@@ -77,7 +90,7 @@
      <label class="hdng" id="lblHeading"></label>
      </div>
       <div>
-     <label class="hdng fntclr" id="lblMonthAmt"></label>
+     <label class="fntclr" id="lblMonthAmt"></label>
      </div>
        <div>
       <label id="lblname"></label>
@@ -88,9 +101,7 @@
         <div>
        <label id="lblInsuredamnt"></label>
         </div>
-        @* <div>
-        <label id="lbloccupation"></label>
-       </div>*@
+       
   </div>
   </form>
  <script>
@@ -110,15 +121,16 @@
             return false;
         }
          $("#InsAmount").val();
-         if ($('#InsAmount').val() == '') {
+         if ($('#InsAmount').val() == '' || $('#InsAmount').val() < 100 ) {
             $('#InsAmount').focus();
-            $("#InsAmount").after("<div class='validation' style='color:red;margin-bottom: 20px;'>Please Enter Insured Amount</div>");
+            $("#InsAmount").after("<div class='validation' style='color:red;margin-bottom: 20px;'>Please Enter Insured Amount greater than 100</div>");
             return false;
         }
        var occp=$("#dlloccuption").val();
       
        if(occp.length>0)
        {
+           $('.validation').hide();
             $("#result").show();
           
        }
@@ -142,21 +154,22 @@
               //alert(key["MPremium"].value);
               if(key=="age")
              {
-                 if(value <10)
+                 if(value <15)
                  {
-                      $("#lblAge").text('Age as per mentioned Date of Birth is Less than 10 year,Minimum age requirement is 10 for premium calculater.');
+                      $("#lblAge").text('Age as per mentioned Date of Birth is Less than 15 year,Minimum age requirement is 15 for premium calculater.');
                       age=false;
                  }
                  else
                  {
+                     $("#iage").val(value);
                      $("#lblAge").text('Age as per mentioned Date of Birth : ' + value);
                   }
              }
-             if(age==true)
+             if(age==true)//check if valid age for calculation
              {
                    if(key=="mPremium")
                   {
-                        $("#lblMonthAmt").text('Your Monthly Premium : ' + value);
+                        $("#lblMonthAmt").text('Your Monthly Premium Amount: ' + value);
                   }
                  if(key=='insuredAmount')
                  {
