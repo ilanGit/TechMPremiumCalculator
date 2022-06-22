@@ -6,4 +6,4 @@ Insurence death amount should be minimum 100 or greater.
 
 //notes
 Insurrence amount is not specific to any CURRENCY.
-Will consider the numbers to calculate
+Will consider the numbers to calculate.
