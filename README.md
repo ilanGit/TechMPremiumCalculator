@@ -1,4 +1,8 @@
 # TechMPremiumCalculator
+Application deployed in Azure :
+https://insurancecalculator321.azurewebsites.net/
+
+
 //.net core -MVC /C#
 //Assumption --
 Date of birth would be having ages greater than 15 years , based on the profession.
